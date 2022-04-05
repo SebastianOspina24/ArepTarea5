@@ -105,7 +105,7 @@ public class SparkWebApp2 {
     }
 
     static String getKeyStorePassword() {
-        if (System.getenv("KEYSTORE") != null) {
+        if (System.getenv("KEYSTOREPWD") != null) {
             return System.getenv("KEYSTOREPWD");
         }
         return "123456";
@@ -119,8 +119,8 @@ public class SparkWebApp2 {
     }
 
     static String getTrustStorePassword() {
-        if (System.getenv("KEYSTORE") != null) {
-            return System.getenv("KEYSTOREPWD");
+        if (System.getenv("TRUSTSTORE") != null) {
+            return System.getenv("TRUSTSTOREPWD");
         }
         return "123456";
     }
