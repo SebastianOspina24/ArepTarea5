@@ -5,8 +5,6 @@ import static spark.Spark.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -24,12 +22,6 @@ public class SparkWebApp {
         loadTrustStore();
         // SecureURLReader.read();
         port(getPort());
-        get("/hello", (req, res) -> {
-            URL url = new URL("https://ec2-18-233-150-39.compute-1.amazonaws.com:5001/hello");
-            url.openConnection();
-            InputStream reader = url.openStream();
-            return reader;
-        });
         get("/getnum", (req, res) -> {
             Random random = new Random();
 
