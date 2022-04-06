@@ -8,7 +8,7 @@ En esta tarea Se desea plantear una conexion segura entre aplicaciones aplicacio
 lo que se debe hacer es el uso de ssl para la conexion http, para lograr esto voy a usar el framework de SparkJava
 y una funcion de esta llamada secure, con esta podemos hacer uso de los keyStore y de los TrustStore, con eso logramos crear certificados, ademas de confiar en certificados creados por nosotros:
 
-![](Img1.png)
+
 
 El metodo Secure permite configurar estos dos con sus Passwords, pero se me presento un problema con el TrusStore que no me lo configuraba por eso realize la configuracion manual de esta usando de net.ssl para ello, una ves probado lo desplege.
 
@@ -21,8 +21,8 @@ Como funciona mi aplicacion super basica primero esta configurada para que lea v
     KEYSTOREPWD: Password de el TrustKeyStoreStore
     PORT: puerto por donde correra el servicio
 
-Esto permite que la aplicacion se pueda desplegar con variables de entorno y se adapte al nuevo entorno donde se despligue,
-Despues de ver esto, vamos a tener una comunicacion entre dos servicios muy sencillos, uno va a consultar al otro un numero aleatorio
+Esto permite que la aplicacion se pueda desplegar con variables de entorno y se adapte al nuevo entorno donde se despligue.
+Despues de ver esto, tenemos un entorno de log in donde se pide usuario y password, la password es guardada con un hash para mantener la integridad de la misma, y se envia desde JS como un HASH, si todo esta bien no dirije a una pagina muy sencilla donde, vamos a tener una comunicacion entre dos servicios muy sencillos, uno va a consultar al otro un numero aleatorio
 usando una conexion http + ssl, ya que a donde va a consultar el numero esta en su TrustStore va a poder realizar la consulta a este,
 Para apreciar eso, el servidor que consulta el numero al igual que el que genera el numero random lo van a imprimir en pantalla.
 
