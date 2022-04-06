@@ -9,27 +9,68 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import com.google.common.hash.Hashing;
+
+import spark.Request;
+import spark.Response;
+import spark.Session;
+
 public class SparkWebApp2 {
 
+    private static Map<String,String> users = new HashMap<>();
     public static void main(String[] args) {
+        staticFiles.location("/public");
+        String sha256hex = Hashing.sha256().hashString("admin", StandardCharsets.UTF_8).toString();
+        users.put("admin",sha256hex);
+        port(getPort());
         secure(getKeyStore(), getKeyStorePassword(), getTrustStore(), getTrustStorePassword());
         loadTrustStore();
-        port(getPort());
-        get("/hello", (req, res) -> {
-            return "Hello word your number is: "+readURL("https://ec2-3-88-70-215.compute-1.amazonaws.com:5000/getnum");
+        before("/auth/*",SparkWebApp2::auth);
+        post("/logein", (req, res) -> {
+            System.out.println("Entro");
+            req.session(true);
+            String pas = req.queryParams("pass");
+            boolean resp = pas.equals(users.get(req.queryParams("user")));
+            String redirect = "";
+            res.type("application/json");
+            if(resp){
+                req.session().attribute("AUTH",true);
+                redirect = "\"auth/hello\"";
+            }else redirect="\"/\"";
+            return "{\"ubi\":"+redirect+"}";
         });
+        get("/auth/hello", (req, res) -> {
+            return "Hello your number is: "+ readURL("https://ec2-54-87-13-198.compute-1.amazonaws.com:5000/getnum");
+        });
+        post("/logeout", (req, res) -> {
+            req.session(true);
+            req.session().attribute("AUTH",false);
+            return true;
+        });
+    }
+
+
+
+    private static void auth(Request rec, Response res){
+        rec.session(true);
+        Session session = rec.session();
+        if(session.isNew()) rec.session().attribute("AUTH",false);
+        else{
+            if(!(boolean)rec.session().attribute("AUTH"))res.redirect("/");
+        }
     }
 
     public static String readURL(String sitetoread) {
